@@ -2,6 +2,8 @@ import inspect
 import locale
 import os
 import re
+import sys
+import traceback
 from typing import (Any, Generator, Generic, Iterable, NamedTuple, Sequence,
                     TypeVar)
 
@@ -678,5 +680,24 @@ def transpile_and_save(read_file_path: str, write_file_path: str | None = None) 
         write_file.write(javascript)
 
 
+def cli_run() -> int:
+    program, *args = sys.argv
+
+    file_path = ""
+    if args:
+        file_path = sys.argv[1]
+    else:
+        # print(f'{program}: Error - Missing required argument "file path"')
+        # return 1
+        file_path = os.path.join('test', 'db', 'db', 'functions.db')
+
+    try:
+        transpile_and_save(file_path)
+    except BaseException:
+        traceback.print_exc()
+        return 1
+    return 0
+
+  
 if __name__ == '__main__':
-    transpile_and_save(os.path.join('test', 'db', 'db', 'functions.db'))
+    sys.exit(cli_run())

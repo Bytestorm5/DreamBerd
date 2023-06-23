@@ -74,21 +74,20 @@ class Tokenizer(BaseTokenizer[Token]):
                 print(f"   -2   {c}")
                 return self._token('SPACE', c)
 
-        elif c in '+-*/\\<>%;':
-            if file.peek() == '=':
-                file.pop()
-                token_map = {
-                    '+': 'ADD_ASSIGN',
-                    '-': 'SUBTRACT_ASSIGN',
-                    '*': 'MULT_ASSIGN',
-                    '/': 'DIV_ASSIGN',
-                    '\\': 'DIV_ASSIGN',
-                    '<': 'LEQUAL',
-                    '>': 'GEQUAL',
-                    '%': 'MOD_ASSIGN',
-                    ';': 'NOT_EQUAL'
-                }
-                return self._token(token_map[c], c + '=')
+        elif c in '+-*/\\<>%;' and file.peek() == '=':
+            file.pop()
+            token_map = {
+                '+': 'ADD_ASSIGN',
+                '-': 'SUBTRACT_ASSIGN',
+                '*': 'MULT_ASSIGN',
+                '/': 'DIV_ASSIGN',
+                '\\': 'DIV_ASSIGN',
+                '<': 'LEQUAL',
+                '>': 'GEQUAL',
+                '%': 'MOD_ASSIGN',
+                ';': 'NOT_EQUAL'
+            }
+            return self._token(token_map[c], c + '=')
             # Let it continue if not followed by equal sign
 
 
@@ -266,6 +265,16 @@ class Tokenizer(BaseTokenizer[Token]):
                 return self._token('SPACE', c)
 
 
+def tokenize(file_path: str) -> None:
+    tokens = list(Tokenizer().tokenize_file(file_path))
+    out = ""
+    for token in tokens:
+        if token.token == 'NEWLINE':
+            out += '\n'
+        else:
+            out += token.token + ' '
+    print(out)
+
+
 if __name__ == "__main__":
-    tokens = list(Tokenizer().tokenize_file(os.path.join('test', 'db', 'db', 'functions.db')))
-    #[print(token) for token in tokens]
+    tokenize(os.path.join('test', 'db', 'db', 'functions.db'))

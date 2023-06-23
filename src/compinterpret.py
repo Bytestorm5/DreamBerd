@@ -2,7 +2,8 @@ import inspect
 import locale
 import os
 import re
-from typing import Generator, Iterable, Sequence, NamedTuple, TypeVar, Generic, Any
+from typing import (Any, Generator, Generic, Iterable, NamedTuple, Sequence,
+                    TypeVar)
 
 import requests
 
@@ -125,7 +126,6 @@ class BaseTokenizer(Generic[Token_co]):
 
     def getNextToken(self, file: SimpleStringCrawler) -> Token_co:
         def readchar(i: int = 1) -> str:
-            # types: misc error: Generator has incompatible item type "Optional[str]"; expected "str"
             return ''.join(file.pop() for _ in range(i))
 
         c = readchar()
@@ -137,11 +137,7 @@ class BaseTokenizer(Generic[Token_co]):
 
         if c == ' ':
             if file.peek(2) == '  ':
-                # types: operator error: Unsupported operand types for + ("str" and "None")
-                # types: note: Right operand is of type "Optional[str]"
                 c += file.pop()
-                # types: operator error: Unsupported operand types for + ("str" and "None")
-                # types: note: Right operand is of type "Optional[str]"
                 c += file.pop()
                 # 3-space indent
                 return self._token('INDENT', c)
@@ -189,7 +185,6 @@ class BaseTokenizer(Generic[Token_co]):
             quote_format = ''
             while c in '\"\'':
                 quote_format += c
-                # types: assignment error: Incompatible types in assignment (expression has type "Optional[str]", variable has type "str")
                 c = file.pop()
 
             # leave c at the next char, it'll be added to the string
@@ -199,10 +194,7 @@ class BaseTokenizer(Generic[Token_co]):
                 quote += c
                 if c == '\\':
                     if file.peek() in '\"\'':
-                        # types: operator error: Unsupported operand types for + ("str" and "None")
-                        # types: note: Right operand is of type "Optional[str]"
                         quote += file.pop()  # Character already escaped
-                # types: assignment error: Incompatible types in assignment (expression has type "Optional[str]", variable has type "str")
                 c = file.pop()
             file.back()
 
@@ -219,7 +211,6 @@ class BaseTokenizer(Generic[Token_co]):
             else:
                 # If there are end quotes, they must match the quote format exactly
                 for i in range(len(quote_format)):
-                    # types: assignment error: Incompatible types in assignment (expression has type "Optional[str]", variable has type "str")
                     c = file.pop()
                     if c != quote_format[-(i + 1)]:
                         # Mismatch
@@ -230,7 +221,6 @@ class BaseTokenizer(Generic[Token_co]):
         elif c == '/' and file.peek() == '/':
             file.pop()  # Get rid of thge next slash
             while c not in '\n\r':
-                # types: assignment error: Incompatible types in assignment (expression has type "Optional[str]", variable has type "str")
                 c = file.pop()
             file.back()
             return self.getNextToken(file)  # Should capture newline

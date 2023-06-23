@@ -2,8 +2,9 @@ import os
 
 import requests
 
-from compinterpret import SimpleStringCrawler, BaseTokenizer, Token as BaseToken, catch_tokenizer_errors
-
+from compinterpret import BaseTokenizer, SimpleStringCrawler
+from compinterpret import Token as BaseToken
+from compinterpret import catch_tokenizer_errors
 
 OPERATOR_TOKENS = {"INC", "DEC", "ADD", "SUBTRACT", "NOT", "MULTIPLY", "EXPONENT", "DIVIDE", "AND", "OR",
           "BIT_AND", "BIT_OR_EX", "BIT_OR_IN", "MODULO", "BIT_SHIFT_LEFT", "BIT_SHIFT_RIGHT_EX", "BIT_SHIFT_RIGHT_0",

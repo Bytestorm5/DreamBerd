@@ -4,8 +4,9 @@ from typing import Sequence
 
 import requests
 
-from compinterpret import SimpleStringCrawler, Tokenizer, Token as BaseToken
-
+from compinterpret import Crawler, SimpleStringCrawler
+from compinterpret import Token as BaseToken
+from compinterpret import Tokenizer
 
 # https://qph.cf2.quoracdn.net/main-qimg-8d58857bb87f14c8e1ce2f6686ef3e04
 OPERATOR_PRECEDENCE = {
@@ -43,7 +44,7 @@ class RawToken(BaseToken):
     __slots__ = ("token", "lexeme", "priority")
     def __init__(self, token: str, lexeme: str, priority: int = 0) -> None:
         self.token = token
-        self.lexeme = lexeme
+        self.lexeme: str = lexeme
         self.priority = priority
 
     def compare(self, other: "RawToken") -> int:
@@ -61,10 +62,10 @@ class RawToken(BaseToken):
 class RawTokenCrawler(Crawler[RawToken]):
     __slots__ = ()
 
-    def peek(self) -> RawToken | None:
+    def peek(self, count: int = 1) -> Sequence[RawToken] | None:
         if self.cursor >= len(self.raw) - 1:
             return None
-        return self.raw[self.cursor]
+        return super().peek(count)
 
 def split_raw_file(path: str) -> list[str] | list[tuple[str, str]]:
     with open(path, 'r', encoding="utf-8") as file:
